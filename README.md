@@ -22,4 +22,14 @@ The optional background track is `dist/assets/audio/happy-birthday-to-you-classi
 
 ## Hosting
 
-The `dist/` folder can be hosted on any static site host. It is configured for ChatGPT Sites through `.openai/hosting.json`.
+The `dist/` folder contains the complete website, including all six optimized photos and the music file. Render does not need to run the Windows-only photo preparation script. The original photos are also committed in `img/` so they remain available for future edits.
+
+### Deploy on Render from GitHub
+
+1. In Render, choose **New → Static Site** and connect `dipak013/shubh_bday` from GitHub.
+2. Choose branch **main** and leave **Root Directory** empty (the repository root).
+3. Set **Build Command** to `test -f dist/index.html && test -f dist/app.js && test -f dist/styles.css && test -f dist/assets/audio/happy-birthday-to-you-classical-serge-quadrado.mp3`.
+4. Set **Publish Directory** to `dist` and select **Deploy Static Site**.
+5. Open the generated `onrender.com` URL. The gift, photos, and music are served from the committed `dist/` files. Future pushes to `main` can trigger automatic redeploys.
+
+The same settings are saved in `render.yaml` if you prefer creating a Render Blueprint. This site does not require environment variables, a server, or a start command. The existing ChatGPT Sites setup is in `.openai/hosting.json`.

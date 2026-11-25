@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: shubh-birthday
+    runtime: static
+    buildCommand: test -f dist/index.html && test -f dist/app.js && test -f dist/styles.css && test -f dist/assets/audio/happy-birthday-to-you-classical-serge-quadrado.mp3
+    staticPublishPath: ./dist
