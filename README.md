@@ -1,26 +1,21 @@
 # Happy Birthday, Shubh!
 
-A single-page birthday surprise. The finished static site is in `dist/` and does not require a build step or external packages.
+A single-page birthday surprise. The deployable static site is in `dist/` and has no runtime dependencies or build step.
 
 ## Preview locally
 
 From `D:\Z_shubh`, run `python -m http.server 4173 -d dist` and open `http://localhost:4173`.
 
-## Add photos
+## Photographs
 
-1. Put 3–4 photos in `dist/assets/photos/` (create the folder if needed).
-2. Edit the `photos` array at the top of `dist/app.js`. Set each `src`, a useful `alt` description, and the `position` for the crop. Remove the fourth array entry if you use only three photos. For example:
+The six original photographs stay in `img/`. The site uses optimized copies in `dist/assets/photos/`. To regenerate those copies after changing an original, run `powershell -File .\scripts\prepare-photos.ps1` from the project root. The script crops screenshot controls from several images without cutting off Shubh's face.
 
-```js
-{ src: './assets/photos/photo-1.jpg', alt: 'Shubh smiling outdoors', position: '50% 35%' }
-```
+The presentation order, image descriptions, and screen positions are defined in the `photos` array at the top of `dist/app.js`: img5, img6, img3, img4, img2, then the close-up img1. The portraits rotate every 4.8 seconds; the eye detail stays for 3 seconds. Visitors can also use Previous, Next, swipe, keyboard arrows, and the thumbnail filmstrip. Automatic rotation pauses on interaction, when the section is offscreen, when the tab is hidden, and when reduced motion is requested.
 
-The page currently uses four clearly marked photo placeholders because no images were in the workspace when it was built. If an image fails to load, that card displays a fallback.
+## Wording
 
-## Edit the message
-
-Update the greeting and wishes in `dist/index.html`. Keep the main greeting exactly `Happy Birthday, Shubh!` if you want to retain the original brief.
+The introduction, greeting, and closing wish are in `dist/index.html`. Keep the greeting exactly `Happy Birthday, Shubh!` if preserving the original request.
 
 ## Hosting
 
-The `dist/` folder can be hosted on any static site host. It is also configured for ChatGPT Sites through `.openai/hosting.json`.
+The `dist/` folder can be hosted on any static site host. It is configured for ChatGPT Sites through `.openai/hosting.json`.
