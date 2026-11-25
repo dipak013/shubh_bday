@@ -1,51 +1,84 @@
-// The presentation order is intentional: five portraits, then the eye detail.
-// Originals stay in img/. Optimized, carefully cropped copies are in assets/photos/.
+// Photo order and short messages are kept together so the story is easy to edit.
+// The original files stay in img/; this page uses optimized copies.
 const photos = [
-  { src: './assets/photos/img5.jpg', alt: 'Shubh in a green sari with a floral backdrop', desktopPosition: '50% 32%', mobilePosition: '50% 50%' },
-  { src: './assets/photos/img6.jpg', alt: 'Shubh wearing sunglasses outdoors', desktopPosition: '50% 34%', mobilePosition: '58% 50%' },
-  { src: './assets/photos/img3.jpg', alt: 'Shubh in a flowing mint outfit', desktopPosition: '50% 18%', mobilePosition: '70% 50%' },
-  { src: './assets/photos/img4.jpg', alt: 'Shubh standing in a warmly lit hall', desktopPosition: '50% 42%', mobilePosition: '55% 50%' },
-  { src: './assets/photos/img2.jpg', alt: 'Shubh beside a bright yellow wall', desktopPosition: '50% 44%', mobilePosition: '51% 50%' },
-  { src: './assets/photos/img1.jpg', alt: 'A close-up of Shubh’s eyes', desktopPosition: '50% 50%', mobilePosition: '50% 50%', kind: 'detail' },
+  {
+    src: './assets/photos/img5.jpg', alt: 'Shubh in a green sari with a floral backdrop',
+    desktopPosition: '50% 32%', mobilePosition: '50% 50%',
+    label: 'For Shubh', eyebrow: 'A day in full bloom', title: 'Happy Birthday,', accent: 'Shubh!',
+    message: 'Wishing you bright moments and countless reasons to smile.',
+  },
+  {
+    src: './assets/photos/img6.jpg', alt: 'Shubh wearing sunglasses outdoors',
+    desktopPosition: '50% 34%', mobilePosition: '58% 50%',
+    label: 'New horizons', eyebrow: 'Fresh air, fresh beginnings', title: 'Bright days', accent: 'ahead.',
+    message: 'May every new day bring a beautiful surprise.',
+  },
+  {
+    src: './assets/photos/img3.jpg', alt: 'Shubh in a flowing mint outfit',
+    desktopPosition: '50% 18%', mobilePosition: '70% 50%',
+    label: 'In motion', eyebrow: 'Your own kind of magic', title: 'Keep the', accent: 'magic moving.',
+    message: 'Here’s to moments that feel light, free, and full of life.',
+  },
+  {
+    src: './assets/photos/img4.jpg', alt: 'Shubh standing in a warmly lit hall',
+    desktopPosition: '50% 42%', mobilePosition: '55% 50%',
+    label: 'Golden moments', eyebrow: 'A little golden glow', title: 'Make today', accent: 'yours.',
+    message: 'Some days deserve to be remembered. Let this be one.',
+  },
+  {
+    src: './assets/photos/img2.jpg', alt: 'Shubh beside a bright yellow wall',
+    desktopPosition: '50% 44%', mobilePosition: '51% 50%',
+    label: 'A little sunshine', eyebrow: 'Color in every corner', title: 'More joy,', accent: 'always.',
+    message: 'May the year ahead be colorful in all the right ways.',
+  },
+  {
+    src: './assets/photos/img1.jpg', alt: 'A close-up of Shubh’s eyes',
+    desktopPosition: '50% 50%', mobilePosition: '50% 50%', kind: 'detail',
+    label: 'One more moment', eyebrow: 'A little wonder remains', title: 'The story', accent: 'continues.',
+    message: 'There is so much still to look forward to.',
+  },
 ];
 
 const body = document.body;
+const hero = document.querySelector('.hero');
 const openButton = document.getElementById('open-button');
-const continueLink = document.getElementById('continue-link');
 const replayButton = document.getElementById('replay-button');
 const surpriseCard = document.getElementById('surprise-card');
 const memories = document.getElementById('memories');
-const closing = document.getElementById('closing');
 const confettiLayer = document.querySelector('.confetti');
 const storyStage = document.getElementById('story-stage');
 const storySlides = document.getElementById('story-slides');
 const storyCount = document.getElementById('story-count');
 const storyProgress = document.getElementById('story-progress');
 const storyStatus = document.getElementById('story-status');
-const filmstrip = document.getElementById('filmstrip');
-const previousButton = document.getElementById('previous-photo');
-const nextButton = document.getElementById('next-photo');
+const storySignatureLabel = document.getElementById('story-signature-label');
+const storyEyebrow = document.getElementById('story-eyebrow');
+const storyTitleMain = document.getElementById('story-title-main');
+const storyTitleAccent = document.getElementById('story-title-accent');
+const storyMessage = document.getElementById('story-message');
+const storyCopy = document.getElementById('story-copy');
+const storyControlLabel = document.getElementById('story-control-label');
+const storyPauseHint = document.getElementById('story-pause-hint');
+const finaleContent = document.getElementById('finale-content');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+const slides = [];
+const progressSegments = [];
 let currentIndex = 0;
 let openingTimer = null;
-let autoScrollTimer = null;
+let resetTimer = null;
 let slideTimer = null;
 let holdTimer = null;
 let isOpening = false;
-let storyVisible = false;
-let pointerHover = false;
-let focusInside = false;
+let isResetting = false;
+let userPaused = false;
 let manualHoldUntil = 0;
-let scrollObserver = null;
 let swipeStart = null;
-
-const slideElements = [];
-const thumbnailElements = [];
-const progressElements = [];
+let suppressClickUntil = 0;
+let wheelLockUntil = 0;
 
 function slideDuration(index = currentIndex) {
-  return photos[index].kind === 'detail' ? 3000 : 4800;
+  return photos[index]?.kind === 'detail' ? 3000 : 3600;
 }
 
 function buildStory() {
@@ -68,41 +101,22 @@ function buildStory() {
     fallback.textContent = 'Photograph unavailable';
     slide.append(image, fallback);
     storySlides.append(slide);
-    slideElements.push(slide);
+    slides.push(slide);
+  });
 
+  for (let index = 0; index <= photos.length; index += 1) {
     const segment = document.createElement('span');
     segment.className = `story-progress-segment${index === 0 ? ' is-active' : ''}`;
     segment.append(document.createElement('i'));
     storyProgress.append(segment);
-    progressElements.push(segment);
-
-    const thumb = document.createElement('button');
-    thumb.type = 'button';
-    thumb.className = `filmstrip-photo${photo.kind === 'detail' ? ' is-detail' : ''}${index === 0 ? ' is-active' : ''}`;
-    thumb.setAttribute('aria-label', `Show photograph ${index + 1} of ${photos.length}: ${photo.alt}`);
-    thumb.setAttribute('aria-pressed', String(index === 0));
-    const thumbImage = document.createElement('img');
-    thumbImage.src = photo.src;
-    thumbImage.alt = '';
-    thumbImage.loading = 'lazy';
-    thumbImage.decoding = 'async';
-    thumbImage.addEventListener('error', () => thumb.classList.add('photo-failed'));
-    const thumbNumber = document.createElement('span');
-    thumbNumber.textContent = String(index + 1).padStart(2, '0');
-    thumb.append(thumbImage, thumbNumber);
-    thumb.addEventListener('click', () => {
-      chooseSlide(index);
-      storyStage.scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth', block: 'start' });
-    });
-    filmstrip.append(thumb);
-    thumbnailElements.push(thumb);
-  });
-  updateSlide(0, false);
+    progressSegments.push(segment);
+  }
+  updateScene(0, false);
 }
 
 function canRotate() {
-  return body.dataset.state === 'revealed' && storyVisible && !document.hidden &&
-    !reducedMotion.matches && !pointerHover && !focusInside;
+  return body.dataset.state === 'revealed' && !memories.hidden && !document.hidden &&
+    !reducedMotion.matches && !userPaused && currentIndex < photos.length;
 }
 
 function stopRotation() {
@@ -122,36 +136,68 @@ function scheduleRotation() {
     return;
   }
   storyStage.style.setProperty('--slide-duration', `${slideDuration()}ms`);
-  // Recreate the active fill animation so it begins with each photograph.
-  const fill = progressElements[currentIndex].firstElementChild;
+  const fill = progressSegments[currentIndex].firstElementChild;
   fill.style.animation = 'none';
   void fill.offsetWidth;
   fill.style.animation = '';
   storyStage.classList.add('is-playing');
-  slideTimer = window.setTimeout(() => updateSlide(currentIndex + 1, false), slideDuration());
+  slideTimer = window.setTimeout(() => updateScene(currentIndex + 1, false), slideDuration());
 }
 
-function updateSlide(index, announce) {
-  currentIndex = (index + photos.length) % photos.length;
-  slideElements.forEach((slide, slideIndex) => slide.classList.toggle('is-active', slideIndex === currentIndex));
-  progressElements.forEach((segment, segmentIndex) => {
+function updateHints() {
+  if (currentIndex === photos.length) return;
+  storyControlLabel.textContent = userPaused ? 'Paused · swipe to continue' : 'Swipe left or scroll down to continue';
+  storyPauseHint.textContent = reducedMotion.matches
+    ? 'Use arrow keys on a keyboard'
+    : (userPaused ? 'Tap center to resume' : 'Tap center to pause');
+}
+
+function updateScene(index, announce) {
+  currentIndex = Math.max(0, Math.min(index, photos.length));
+  const isFinale = currentIndex === photos.length;
+  storyStage.classList.toggle('is-finale', isFinale);
+  finaleContent.inert = !isFinale;
+  finaleContent.setAttribute('aria-hidden', String(!isFinale));
+  slides.forEach((slide, slideIndex) => slide.classList.toggle('is-active', !isFinale && slideIndex === currentIndex));
+  progressSegments.forEach((segment, segmentIndex) => {
     segment.classList.toggle('is-active', segmentIndex === currentIndex);
     segment.classList.toggle('is-complete', segmentIndex < currentIndex);
   });
-  thumbnailElements.forEach((thumb, thumbIndex) => {
-    const active = thumbIndex === currentIndex;
-    thumb.classList.toggle('is-active', active);
-    thumb.setAttribute('aria-pressed', String(active));
-  });
-  storyCount.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
-  storyStage.setAttribute('aria-label', `Birthday photographs, ${currentIndex + 1} of ${photos.length}: ${photos[currentIndex].alt}`);
-  if (announce) storyStatus.textContent = `Photograph ${currentIndex + 1} of ${photos.length}: ${photos[currentIndex].alt}`;
+
+  if (isFinale) {
+    storyStage.setAttribute('aria-label', 'Final birthday wish. Replay the surprise to start again.');
+    storyStatus.textContent = 'Final birthday wish. The best moments are still ahead.';
+  } else {
+    const photo = photos[currentIndex];
+    storySignatureLabel.textContent = photo.label;
+    storyEyebrow.textContent = photo.eyebrow;
+    storyTitleMain.textContent = photo.title;
+    storyTitleAccent.textContent = photo.accent;
+    storyMessage.textContent = photo.message;
+    storyCopy.classList.remove('is-changing');
+    void storyCopy.offsetWidth;
+    storyCopy.classList.add('is-changing');
+    storyCount.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(photos.length).padStart(2, '0')}`;
+    storyStage.setAttribute('aria-label', `Birthday photo ${currentIndex + 1} of ${photos.length}: ${photo.alt}. Swipe left or up, scroll down, or tap the right side for the next scene. Press Space to pause.`);
+    if (announce) storyStatus.textContent = `Photo ${currentIndex + 1} of ${photos.length}: ${photo.alt}`;
+    updateHints();
+  }
   scheduleRotation();
 }
 
-function chooseSlide(index) {
-  manualHoldUntil = Date.now() + 8000;
-  updateSlide(index, true);
+function chooseScene(index) {
+  if (index < 0 || index > photos.length || index === currentIndex) return;
+  manualHoldUntil = Date.now() + slideDuration(index);
+  updateScene(index, true);
+}
+
+function togglePause() {
+  if (reducedMotion.matches || currentIndex === photos.length) return;
+  userPaused = !userPaused;
+  manualHoldUntil = 0;
+  updateHints();
+  storyStatus.textContent = userPaused ? 'Photo story paused' : 'Photo story playing';
+  scheduleRotation();
 }
 
 function makeConfetti() {
@@ -170,89 +216,83 @@ function makeConfetti() {
   }
 }
 
-function prepareScrollReveals() {
-  if (scrollObserver) scrollObserver.disconnect();
-  const elements = document.querySelectorAll('.reveal-on-scroll');
-  if (reducedMotion.matches || !('IntersectionObserver' in window)) {
-    elements.forEach((element) => element.classList.add('is-visible'));
-    return;
-  }
-  scrollObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        scrollObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px 50px 0px' });
-  elements.forEach((element) => scrollObserver.observe(element));
-}
-
-function completeOpening() {
+function revealStory() {
   openingTimer = null;
   body.dataset.state = 'revealed';
-  surpriseCard.setAttribute('aria-hidden', 'false');
+  hero.setAttribute('aria-hidden', 'true');
+  surpriseCard.setAttribute('aria-hidden', 'true');
   memories.hidden = false;
-  closing.hidden = false;
-  continueLink.hidden = false;
+  memories.removeAttribute('aria-hidden');
   openButton.hidden = true;
   openButton.setAttribute('aria-expanded', 'true');
-  prepareScrollReveals();
   isOpening = false;
-  surpriseCard.focus({ preventScroll: true });
-  if (!reducedMotion.matches) {
-    autoScrollTimer = window.setTimeout(() => {
-      if (body.dataset.state === 'revealed' && window.scrollY < 100) {
-        memories.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 1700);
-  }
+  manualHoldUntil = Date.now() + (reducedMotion.matches ? 0 : 500);
+  updateScene(0, false);
+  window.requestAnimationFrame(() => memories.classList.add('is-visible'));
+  storyStage.focus({ preventScroll: true });
 }
 
 function openSurprise() {
-  if (isOpening || body.dataset.state !== 'closed') return;
+  if (isOpening || isResetting || body.dataset.state !== 'closed') return;
   isOpening = true;
   openButton.disabled = true;
   body.dataset.state = 'opening';
   makeConfetti();
-  openingTimer = window.setTimeout(completeOpening, reducedMotion.matches ? 120 : 1900);
+  openingTimer = window.setTimeout(revealStory, reducedMotion.matches ? 120 : 1600);
 }
 
 function replaySurprise() {
+  if (isResetting) return;
+  isResetting = true;
   window.clearTimeout(openingTimer);
-  window.clearTimeout(autoScrollTimer);
-  openingTimer = null;
-  autoScrollTimer = null;
-  isOpening = false;
-  manualHoldUntil = 0;
   stopRotation();
-  if (scrollObserver) scrollObserver.disconnect();
-  confettiLayer.replaceChildren();
+  userPaused = false;
+  manualHoldUntil = 0;
   body.dataset.state = 'closed';
+  hero.removeAttribute('aria-hidden');
+  memories.setAttribute('aria-hidden', 'true');
+  memories.classList.remove('is-visible');
   surpriseCard.setAttribute('aria-hidden', 'true');
-  memories.hidden = true;
-  closing.hidden = true;
-  continueLink.hidden = true;
+  confettiLayer.replaceChildren();
   openButton.hidden = false;
   openButton.disabled = false;
   openButton.setAttribute('aria-expanded', 'false');
-  updateSlide(0, false);
-  window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
-  window.setTimeout(() => openButton.focus({ preventScroll: true }), reducedMotion.matches ? 0 : 450);
+  updateScene(0, false);
+  window.clearTimeout(resetTimer);
+  resetTimer = window.setTimeout(() => {
+    memories.hidden = true;
+    isResetting = false;
+    openButton.focus({ preventScroll: true });
+  }, reducedMotion.matches ? 20 : 650);
 }
 
 buildStory();
 openButton.addEventListener('click', openSurprise);
 replayButton.addEventListener('click', replaySurprise);
-previousButton.addEventListener('click', () => chooseSlide(currentIndex - 1));
-nextButton.addEventListener('click', () => chooseSlide(currentIndex + 1));
 
 storyStage.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowRight') { event.preventDefault(); chooseSlide(currentIndex + 1); }
-  if (event.key === 'ArrowLeft') { event.preventDefault(); chooseSlide(currentIndex - 1); }
-  if (event.key === 'Home') { event.preventDefault(); chooseSlide(0); }
-  if (event.key === 'End') { event.preventDefault(); chooseSlide(photos.length - 1); }
+  if (event.target.closest('button')) return;
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || event.key === 'PageDown') {
+    event.preventDefault(); chooseScene(currentIndex + 1);
+  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp' || event.key === 'PageUp') {
+    event.preventDefault(); chooseScene(currentIndex - 1);
+  } else if (event.key === 'Home') {
+    event.preventDefault(); chooseScene(0);
+  } else if (event.key === 'End') {
+    event.preventDefault(); chooseScene(photos.length);
+  } else if (event.key === ' ' || event.key === 'Spacebar') {
+    event.preventDefault(); togglePause();
+  }
 });
+
+storyStage.addEventListener('click', (event) => {
+  if (event.target.closest('button') || Date.now() < suppressClickUntil) return;
+  const fraction = event.clientX / window.innerWidth;
+  if (fraction >= 0.7) chooseScene(currentIndex + 1);
+  else if (fraction <= 0.3) chooseScene(currentIndex - 1);
+  else togglePause();
+});
+
 storyStage.addEventListener('touchstart', (event) => {
   const touch = event.changedTouches[0];
   swipeStart = { x: touch.clientX, y: touch.clientY };
@@ -263,33 +303,24 @@ storyStage.addEventListener('touchend', (event) => {
   const deltaX = touch.clientX - swipeStart.x;
   const deltaY = touch.clientY - swipeStart.y;
   swipeStart = null;
-  if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
-    chooseSlide(currentIndex + (deltaX < 0 ? 1 : -1));
+  const horizontal = Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.1;
+  const vertical = Math.abs(deltaY) > 65 && Math.abs(deltaY) > Math.abs(deltaX) * 1.1;
+  if (horizontal || vertical) {
+    suppressClickUntil = Date.now() + 600;
+    chooseScene(currentIndex + ((horizontal ? deltaX : deltaY) < 0 ? 1 : -1));
   }
 }, { passive: true });
 storyStage.addEventListener('touchcancel', () => { swipeStart = null; });
-storyStage.addEventListener('pointerenter', (event) => {
-  if (event.pointerType === 'mouse') { pointerHover = true; scheduleRotation(); }
-});
-storyStage.addEventListener('pointerleave', (event) => {
-  if (event.pointerType === 'mouse') { pointerHover = false; scheduleRotation(); }
-});
-storyStage.addEventListener('focusin', () => { focusInside = true; scheduleRotation(); });
-storyStage.addEventListener('focusout', () => {
-  window.setTimeout(() => {
-    focusInside = storyStage.contains(document.activeElement);
-    scheduleRotation();
-  }, 0);
-});
-document.addEventListener('visibilitychange', scheduleRotation);
-reducedMotion.addEventListener('change', scheduleRotation);
 
-if ('IntersectionObserver' in window) {
-  const storyObserver = new IntersectionObserver(([entry]) => {
-    storyVisible = entry.isIntersecting && entry.intersectionRatio >= 0.35;
-    scheduleRotation();
-  }, { threshold: [0, 0.35, 0.6] });
-  storyObserver.observe(storyStage);
-} else {
-  storyVisible = true;
-}
+storyStage.addEventListener('wheel', (event) => {
+  if (memories.hidden) return;
+  event.preventDefault();
+  if (Date.now() < wheelLockUntil) return;
+  const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+  if (Math.abs(delta) < 25) return;
+  wheelLockUntil = Date.now() + 1100;
+  chooseScene(currentIndex + (delta > 0 ? 1 : -1));
+}, { passive: false });
+
+document.addEventListener('visibilitychange', scheduleRotation);
+reducedMotion.addEventListener('change', () => { updateHints(); scheduleRotation(); });

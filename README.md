@@ -10,11 +10,11 @@ From `D:\Z_shubh`, run `python -m http.server 4173 -d dist` and open `http://loc
 
 The six original photographs stay in `img/`. The site uses optimized copies in `dist/assets/photos/`. To regenerate those copies after changing an original, run `powershell -File .\scripts\prepare-photos.ps1` from the project root. The script crops screenshot controls from several images without cutting off Shubh's face.
 
-The presentation order, image descriptions, and screen positions are defined in the `photos` array at the top of `dist/app.js`: img5, img6, img3, img4, img2, then the close-up img1. The portraits rotate every 4.8 seconds; the eye detail stays for 3 seconds. Visitors can also use Previous, Next, swipe, keyboard arrows, and the thumbnail filmstrip. Automatic rotation pauses on interaction, when the section is offscreen, when the tab is hidden, and when reduced motion is requested.
+The presentation order, short messages, image descriptions, and screen positions are defined in the `photos` array at the top of `dist/app.js`: img5, img6, img3, img4, img2, then the close-up img1. After the gift opens, each photo fills one screen for 3.6 seconds; the close-up stays for 3 seconds. A separate final wish follows the six photos. Visitors can advance with a left or upward swipe, a downward scroll, a tap on the right side, or the right/down arrow keys. Reverse those directions to go back. A center tap or Space pauses and resumes the photos. Automatic advance pauses while the tab is hidden and is disabled for reduced motion.
 
 ## Wording
 
-The introduction, greeting, and closing wish are in `dist/index.html`. Keep the greeting exactly `Happy Birthday, Shubh!` if preserving the original request.
+The introduction and final wish are in `dist/index.html`; the photo messages are in `dist/app.js`. The final screen includes `Made by Dipak`. Keep the greeting exactly `Happy Birthday, Shubh!` if preserving the original request.
 
 ## Hosting
 

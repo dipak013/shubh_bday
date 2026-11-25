@@ -70,7 +70,6 @@
               <span class="button-spark" aria-hidden="true">✦</span>
               <span>Open your surprise</span>
             </button>
-            <a class="continue-link" id="continue-link" href="#memories" hidden>See the photo story</a>
           </div>
           <p class="hero-footnote" id="hero-footnote">Made for a moment worth celebrating</p>
         </section>
@@ -82,54 +81,39 @@
             <div class="story-sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
             <div class="story-topbar">
-              <span class="story-signature"><span aria-hidden="true">✦</span> For Shubh</span>
+              <span class="story-signature"><span aria-hidden="true">✦</span><span id="story-signature-label">For Shubh</span></span>
               <span class="story-count" id="story-count">01 / 06</span>
             </div>
 
-            <div class="story-copy">
-              <p class="story-eyebrow">A day worth celebrating</p>
-              <h2 id="story-title">Happy Birthday, <em>Shubh!</em></h2>
-              <p>May this year bring you beautiful surprises, bright moments, and countless reasons to smile.</p>
+            <div class="story-copy" id="story-copy">
+              <p class="story-eyebrow" id="story-eyebrow">A day in full bloom</p>
+              <h2 id="story-title"><span id="story-title-main">Happy Birthday,</span> <em id="story-title-accent">Shubh!</em></h2>
+              <p id="story-message">Wishing you bright moments and countless reasons to smile.</p>
             </div>
 
             <div class="story-bottom">
               <div class="story-progress" id="story-progress" aria-hidden="true"></div>
               <div class="story-controls">
-                <span class="story-control-label">Six moments to keep</span>
-                <div class="story-nav">
-                  <button type="button" class="story-nav-button" id="previous-photo" aria-label="Previous photo">Previous</button>
-                  <button type="button" class="story-nav-button" id="next-photo" aria-label="Next photo">Next</button>
-                </div>
+                <span class="story-control-label" id="story-control-label">Swipe left or scroll down to continue</span>
+                <span class="story-pause-hint" id="story-pause-hint">Tap center to pause</span>
               </div>
+            </div>
+            <div class="story-edge-cue" aria-hidden="true"><span class="edge-chevron">›</span><span class="edge-label">NEXT</span></div>
+
+            <div class="finale-content" id="finale-content" aria-hidden="true" inert>
+              <div class="finale-ring finale-ring-one" aria-hidden="true"></div>
+              <div class="finale-ring finale-ring-two" aria-hidden="true"></div>
+              <span class="finale-star" aria-hidden="true">✧</span>
+              <p class="finale-eyebrow">One final wish</p>
+              <h2 id="finale-title">The best moments<br />are still <em>ahead.</em></h2>
+              <p class="finale-message">May your days be filled with bright surprises, quiet happiness, and memories worth keeping.</p>
+              <button class="replay-button" id="replay-button" type="button">Replay the surprise</button>
+              <p class="finale-credit">Made by Dipak</p>
             </div>
             <span class="visually-hidden" id="story-status" aria-live="polite"></span>
           </div>
-
-          <div class="story-after">
-            <div class="story-after-heading reveal-on-scroll">
-              <p class="eyebrow"><span class="eyebrow-line"></span> Six little moments <span class="eyebrow-line"></span></p>
-              <h3>Every frame, <em>a reason to smile.</em></h3>
-              <p>Take another look at any photograph.</p>
-            </div>
-            <div class="filmstrip" id="filmstrip" aria-label="Choose a photograph"></div>
-            <p class="filmstrip-hint">Select a photograph to see it above</p>
-          </div>
-        </section>
-
-        <section class="closing" id="closing" aria-labelledby="closing-title" hidden>
-          <div class="closing-orbit closing-orbit-one" aria-hidden="true"></div>
-          <div class="closing-orbit closing-orbit-two" aria-hidden="true"></div>
-          <div class="closing-inner reveal-on-scroll">
-            <span class="closing-star" aria-hidden="true">✧</span>
-            <p class="eyebrow">One more wish for you</p>
-            <h2 id="closing-title">The best moments<br />are still <em>ahead.</em></h2>
-            <p>May your days be filled with bright surprises, quiet happiness, and memories worth keeping.</p>
-            <button class="replay-button" id="replay-button" type="button">Replay the surprise</button>
-          </div>
         </section>
       </main>
-
-      <footer class="site-footer"><span>Made with a little magic</span><span aria-hidden="true">✦</span><span>For Shubh</span></footer>
     </div>
   </body>
 </html>
