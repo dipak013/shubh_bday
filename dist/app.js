@@ -44,6 +44,8 @@ const hero = document.querySelector('.hero');
 const openButton = document.getElementById('open-button');
 const replayButton = document.getElementById('replay-button');
 const surpriseCard = document.getElementById('surprise-card');
+const cardSeconds = document.getElementById('card-seconds');
+const cardStatus = document.getElementById('card-status');
 const memories = document.getElementById('memories');
 const confettiLayer = document.querySelector('.confetti');
 const storyStage = document.getElementById('story-stage');
@@ -73,6 +75,10 @@ const slides = [];
 const progressSegments = [];
 let currentIndex = 0;
 let openingTimer = null;
+let cardHoldTimer = null;
+let cardCountdownInterval = null;
+let cardReadDeadline = 0;
+let isCardReading = false;
 let resetTimer = null;
 let slideTimer = null;
 let holdTimer = null;
@@ -81,6 +87,7 @@ let isResetting = false;
 let userPaused = false;
 let manualHoldUntil = 0;
 let swipeStart = null;
+let cardSwipeStart = null;
 let suppressClickUntil = 0;
 let wheelLockUntil = 0;
 let musicWanted = false;
@@ -328,8 +335,42 @@ function makeConfetti() {
   }
 }
 
-function revealStory() {
+function clearCardReading() {
+  window.clearTimeout(openingTimer);
+  window.clearTimeout(cardHoldTimer);
+  window.clearInterval(cardCountdownInterval);
   openingTimer = null;
+  cardHoldTimer = null;
+  cardCountdownInterval = null;
+  cardReadDeadline = 0;
+  isCardReading = false;
+  body.classList.remove('card-reading');
+  surpriseCard.classList.remove('is-reading');
+  cardSeconds.textContent = '10';
+  cardStatus.textContent = '';
+}
+
+function beginCardReading() {
+  openingTimer = null;
+  if (body.dataset.state !== 'opening' || !isOpening) return;
+  isCardReading = true;
+  cardReadDeadline = Date.now() + 10000;
+  body.classList.add('card-reading');
+  surpriseCard.classList.add('is-reading');
+  surpriseCard.setAttribute('aria-hidden', 'false');
+  cardStatus.textContent = 'Happy Birthday, Shubh! The next photograph appears in ten seconds. Swipe or press Right Arrow to continue sooner.';
+  cardCountdownInterval = window.setInterval(() => {
+    cardSeconds.textContent = String(Math.max(1, Math.ceil((cardReadDeadline - Date.now()) / 1000)));
+  }, 200);
+  cardHoldTimer = window.setTimeout(revealStory, 10000);
+}
+
+function skipCard() {
+  if (isCardReading) revealStory();
+}
+
+function revealStory() {
+  clearCardReading();
   body.dataset.state = 'revealed';
   hero.setAttribute('aria-hidden', 'true');
   surpriseCard.setAttribute('aria-hidden', 'true');
@@ -351,13 +392,13 @@ function openSurprise() {
   body.dataset.state = 'opening';
   void toggleMusic();
   makeConfetti();
-  openingTimer = window.setTimeout(revealStory, reducedMotion.matches ? 120 : 4000);
+  openingTimer = window.setTimeout(reducedMotion.matches ? revealStory : beginCardReading, reducedMotion.matches ? 120 : 2800);
 }
 
 function replaySurprise() {
   if (isResetting) return;
   isResetting = true;
-  window.clearTimeout(openingTimer);
+  clearCardReading();
   stopRotation();
   ++musicRequest;
   fadeMusicOut(600, true);
@@ -391,6 +432,42 @@ birthdayAudio.addEventListener('error', () => {
   musicWanted = false;
   updateMusicButton();
   musicStatus.textContent = 'Music is unavailable';
+});
+
+hero.addEventListener('click', (event) => {
+  if (isCardReading && event.clientX >= window.innerWidth * 0.7) skipCard();
+});
+hero.addEventListener('touchstart', (event) => {
+  const touch = event.changedTouches[0];
+  cardSwipeStart = { x: touch.clientX, y: touch.clientY };
+}, { passive: true });
+hero.addEventListener('touchend', (event) => {
+  if (!isCardReading || !cardSwipeStart) return;
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - cardSwipeStart.x;
+  const deltaY = touch.clientY - cardSwipeStart.y;
+  cardSwipeStart = null;
+  const horizontal = Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.1;
+  const upward = deltaY < -65 && Math.abs(deltaY) > Math.abs(deltaX) * 1.1;
+  if (horizontal || upward) {
+    suppressClickUntil = Date.now() + 650;
+    skipCard();
+  }
+}, { passive: true });
+hero.addEventListener('touchcancel', () => { cardSwipeStart = null; });
+hero.addEventListener('wheel', (event) => {
+  if (!isCardReading) return;
+  const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+  if (Math.abs(delta) < 30) return;
+  event.preventDefault();
+  skipCard();
+}, { passive: false });
+document.addEventListener('keydown', (event) => {
+  if (!isCardReading) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', 'Enter', ' '].includes(event.key)) {
+    event.preventDefault();
+    skipCard();
+  }
 });
 
 storyStage.addEventListener('keydown', (event) => {

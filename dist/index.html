@@ -19,11 +19,12 @@
         <span class="brand-label">A birthday surprise</span>
       </header>
 
-      <button class="music-toggle" id="music-toggle" type="button" aria-label="Play background music" aria-pressed="false" aria-controls="birthday-audio">
+      <button class="music-toggle" id="music-toggle" type="button" aria-label="Play background music" aria-describedby="music-attribution" aria-pressed="false" aria-controls="birthday-audio" title="Music by Serge Quadrado · CC BY-NC 4.0">
         <span class="music-note" aria-hidden="true">♫</span>
         <span class="music-label visually-hidden" id="music-label">Play music</span>
       </button>
       <audio id="birthday-audio" preload="auto" loop src="./assets/audio/happy-birthday-to-you-classical-serge-quadrado.mp3"></audio>
+      <span class="visually-hidden" id="music-attribution">Happy Birthday to You Classical by Serge Quadrado, licensed under CC BY-NC 4.0. Source: Free Music Archive.</span>
       <span class="visually-hidden" id="music-status" aria-live="polite"></span>
 
       <main id="main">
@@ -66,10 +67,16 @@
               <h2 class="card-heading">Happy Birthday, <br /><span>Shubh!</span></h2>
               <p class="card-wish">May this year bring you beautiful surprises, bright moments, and countless reasons to smile.</p>
               <span class="card-flourish" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
+              <div class="card-reading-prompt" id="card-reading-prompt" aria-hidden="true">
+                <div class="card-reading-label"><span>Next in <strong id="card-seconds">10</strong>s</span><span>Swipe or tap right <b aria-hidden="true">›</b></span></div>
+                <span class="card-reading-track"><i></i></span>
+              </div>
             </div>
 
             <div class="confetti" aria-hidden="true"></div>
           </div>
+          <span class="card-edge-cue" aria-hidden="true">›</span>
+          <span class="visually-hidden" id="card-status" aria-live="polite"></span>
 
           <div class="hero-action">
             <button class="primary-button" id="open-button" type="button" aria-controls="surprise-card memories" aria-expanded="false">
@@ -115,7 +122,6 @@
               <p class="finale-message">May this birthday bring laughter, little surprises, and moments you’ll want to keep. Here’s to a beautiful year ahead.</p>
               <button class="replay-button" id="replay-button" type="button">Replay the surprise</button>
               <p class="finale-credit">Made by Dipak</p>
-              <p class="music-credit">Music: <a href="https://freemusicarchive.org/music/serge-quadrado/happy-birthday-to-you-instrumentals/happy-birthday-to-you-classical/" target="_blank" rel="noopener noreferrer">Serge Quadrado</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a></p>
             </div>
             <span class="visually-hidden" id="story-status" aria-live="polite"></span>
           </div>
