@@ -105,11 +105,11 @@ img { max-width: 100%; }
 body[data-state='opening'] .intro-copy, body[data-state='revealed'] .intro-copy { opacity: 0; transform: translateY(-16px); pointer-events: none; }
 body[data-state='opening'] .primary-button { opacity: 0; transform: translateY(18px); }
 body[data-state='opening'] .gift, body[data-state='revealed'] .gift { animation: none; }
-body[data-state='opening'] .gift-lid, body[data-state='revealed'] .gift-lid { animation: lid-open 1.25s cubic-bezier(.18,.7,.19,1) .22s both; }
+body[data-state='opening'] .gift-lid, body[data-state='revealed'] .gift-lid { animation: lid-open 1.7s cubic-bezier(.18,.7,.19,1) .35s both; }
 body[data-state='opening'] .gift-glow, body[data-state='revealed'] .gift-glow { opacity: 1; scale: 1.7; }
-body[data-state='opening'] .light-rays, body[data-state='revealed'] .light-rays { animation: rays-in 1.2s ease .45s both; }
-body[data-state='opening'] .surprise-card, body[data-state='revealed'] .surprise-card { animation: card-rise 1.25s cubic-bezier(.2,.75,.2,1.04) .7s both; }
-body[data-state='opening'] .confetti i, body[data-state='revealed'] .confetti i { animation: confetti-fall 1.8s cubic-bezier(.2,.55,.35,1) var(--delay) forwards; }
+body[data-state='opening'] .light-rays, body[data-state='revealed'] .light-rays { animation: rays-in 1.65s ease .7s both; }
+body[data-state='opening'] .surprise-card, body[data-state='revealed'] .surprise-card { animation: card-rise 1.6s cubic-bezier(.2,.75,.2,1.04) 1.15s both; }
+body[data-state='opening'] .confetti i, body[data-state='revealed'] .confetti i { animation: confetti-fall 2.1s cubic-bezier(.2,.55,.35,1) var(--delay) forwards; }
 @keyframes lid-open { 0% { transform: translate(0,0) rotate(0); opacity: 1; } 55% { transform: translate(20px,-100px) rotate(24deg); opacity: 1; } 100% { transform: translate(94px,-141px) rotate(47deg); opacity: .72; } }
 @keyframes rays-in { 0% { opacity: 0; transform: translateX(-50%) scale(.5); } 50% { opacity: 1; } 100% { opacity: .48; transform: translateX(-50%) scale(1.15); } }
 @keyframes card-rise { 0% { opacity: 0; transform: translate(-50%,130px) rotate(-5deg) scale(.5); } 62% { opacity: 1; transform: translate(-50%,-13px) rotate(2deg) scale(1.04); } 100% { opacity: 1; transform: translate(-50%,0) rotate(-1deg) scale(1); } }
@@ -387,17 +387,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; overscroll-behavior: n
 .music-note { display: inline-block; min-width: 15px; color: var(--gold); font-family: var(--serif); font-size: 1.12rem; line-height: 1; }
 .music-toggle.is-playing .music-note { animation: music-float 2s ease-in-out infinite; }
 @keyframes music-float { 50% { transform: translateY(-2px) rotate(8deg); } }
+body[data-state='closed'] .music-toggle { display: none; }
+.music-toggle { width: 38px; padding: 0; }
+.music-toggle:not(.is-playing)::after { content: ''; position: absolute; width: 18px; height: 1.5px; transform: rotate(-48deg); background: currentColor; box-shadow: 0 0 4px #130e27; }
 body[data-state='revealed'] .music-toggle { top: clamp(66px, 8vw, 93px); }
+.finale-ring-one { animation: finale-breathe 7s ease-in-out infinite; }
+.finale-star { animation: finale-spark 3s ease-in-out infinite; }
+@keyframes finale-breathe { 50% { transform: translate(-50%, -50%) scale(1.045); border-color: rgba(244, 212, 157, .25); } }
+@keyframes finale-spark { 50% { transform: translateY(-5px); text-shadow: 0 0 18px rgba(244, 212, 157, .55); } }
 .finale-credit { bottom: clamp(43px, 6svh, 60px); }
 .music-credit { position: absolute !important; bottom: clamp(16px, 2.7svh, 27px); left: 10px; right: 10px; margin: 0; color: #bdaec9; font-size: .63rem; letter-spacing: .02em; }
 .music-credit a { color: #d8bfd0; text-decoration-color: rgba(216, 191, 208, .45); text-underline-offset: 2px; }
 .music-credit a:hover { color: #fff1d7; }
 
 @media (max-width: 540px) {
-  .music-toggle { top: 17px; right: 17px; min-height: 34px; padding: 0 10px; font-size: .64rem; }
+  .music-toggle { top: 17px; right: 17px; width: 34px; min-height: 34px; padding: 0; font-size: .64rem; }
   body[data-state='revealed'] .music-toggle { top: 59px; }
   .music-credit { font-size: .59rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .music-toggle.is-playing .music-note { animation: none !important; }
+  .finale-ring-one, .finale-star { animation: none !important; }
 }

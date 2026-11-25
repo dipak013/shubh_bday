@@ -189,7 +189,7 @@ async function toggleMusic() {
 }
 
 function slideDuration(index = currentIndex) {
-  return photos[index]?.kind === 'detail' ? 3000 : 3600;
+  return photos[index]?.kind === 'detail' ? 2600 : 3300;
 }
 
 function buildStory() {
@@ -338,7 +338,7 @@ function revealStory() {
   openButton.hidden = true;
   openButton.setAttribute('aria-expanded', 'true');
   isOpening = false;
-  manualHoldUntil = Date.now() + (reducedMotion.matches ? 0 : 500);
+  manualHoldUntil = Date.now() + (reducedMotion.matches ? 0 : 350);
   updateScene(0, false);
   window.requestAnimationFrame(() => memories.classList.add('is-visible'));
   storyStage.focus({ preventScroll: true });
@@ -349,8 +349,9 @@ function openSurprise() {
   isOpening = true;
   openButton.disabled = true;
   body.dataset.state = 'opening';
+  void toggleMusic();
   makeConfetti();
-  openingTimer = window.setTimeout(revealStory, reducedMotion.matches ? 120 : 1600);
+  openingTimer = window.setTimeout(revealStory, reducedMotion.matches ? 120 : 4000);
 }
 
 function replaySurprise() {
