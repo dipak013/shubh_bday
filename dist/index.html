@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#130e27" />
+    <meta name="description" content="A little birthday surprise for Shubh." />
+    <title>Happy Birthday, Shubh!</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body data-state="closed">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="page-shell">
+      <header class="site-header" aria-label="Page header">
+        <span class="brand-mark" aria-hidden="true">✳</span>
+        <span class="brand-label">A birthday surprise</span>
+        <span class="header-stars" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
+      </header>
+
+      <main id="main">
+        <section class="hero" aria-labelledby="intro-title">
+          <div class="hero-halo" aria-hidden="true"></div>
+          <div class="ambient-stars" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+
+          <div class="intro-copy" id="intro-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> Just for you <span class="eyebrow-line"></span></p>
+            <h1 id="intro-title">Today holds<br /><em>a little magic.</em></h1>
+            <p class="intro-subtitle">And this one has something waiting inside.</p>
+          </div>
+
+          <div class="gift-stage" id="gift-stage" aria-label="A wrapped birthday gift">
+            <div class="gift-glow" aria-hidden="true"></div>
+            <div class="light-rays" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="gift-shadow" aria-hidden="true"></div>
+
+            <div class="gift" aria-hidden="true">
+              <div class="gift-lid">
+                <div class="lid-ribbon"></div>
+                <div class="bow bow-left"></div>
+                <div class="bow bow-right"></div>
+                <div class="bow-knot"></div>
+              </div>
+              <div class="gift-body">
+                <div class="gift-body-shine"></div>
+                <div class="gift-ribbon-vertical"></div>
+                <div class="gift-ribbon-horizontal"></div>
+              </div>
+            </div>
+
+            <div class="surprise-card" id="surprise-card" aria-hidden="true" tabindex="-1">
+              <div class="card-corner card-corner-tl" aria-hidden="true">✧</div>
+              <div class="card-corner card-corner-br" aria-hidden="true">✧</div>
+              <p class="card-kicker">Today is yours</p>
+              <span class="card-rule" aria-hidden="true"></span>
+              <h2 class="card-heading">Happy Birthday, <br /><span>Shubh!</span></h2>
+              <p class="card-wish">May this year bring you beautiful surprises, bright moments, and countless reasons to smile.</p>
+              <span class="card-flourish" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
+            </div>
+
+            <div class="confetti" aria-hidden="true"></div>
+          </div>
+
+          <div class="hero-action">
+            <button class="primary-button" id="open-button" type="button" aria-controls="surprise-card memories" aria-expanded="false">
+              <span class="button-spark" aria-hidden="true">✦</span>
+              <span>Open your surprise</span>
+            </button>
+            <a class="continue-link" id="continue-link" href="#memories" hidden>Keep the magic going <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="hero-footnote" id="hero-footnote">Made for a moment worth celebrating</p>
+        </section>
+
+        <section class="memories" id="memories" aria-labelledby="memories-title" hidden>
+          <div class="section-header reveal-on-scroll">
+            <p class="eyebrow"><span class="eyebrow-line"></span> A little gallery <span class="eyebrow-line"></span></p>
+            <h2 id="memories-title">Moments to <em>remember.</em></h2>
+            <p>Every beautiful story is made of little moments. Here’s a space for a few of yours.</p>
+          </div>
+          <div class="photo-grid" id="photo-grid" aria-label="Birthday photo gallery"></div>
+          <p class="gallery-swipe-hint">Swipe to explore the photos</p>
+          <p class="gallery-note" id="gallery-note">Your photos will appear here once added.</p>
+        </section>
+
+        <section class="closing" id="closing" aria-labelledby="closing-title" hidden>
+          <div class="closing-orbit closing-orbit-one" aria-hidden="true"></div>
+          <div class="closing-orbit closing-orbit-two" aria-hidden="true"></div>
+          <div class="closing-inner reveal-on-scroll">
+            <span class="closing-star" aria-hidden="true">✧</span>
+            <p class="eyebrow">One more wish for you</p>
+            <h2 id="closing-title">Here’s to a day full of joy<br />and a year full of <em>wonderful memories.</em></h2>
+            <p>Make a wish. The best moments are still ahead.</p>
+            <button class="replay-button" id="replay-button" type="button">Replay the surprise <span aria-hidden="true">↺</span></button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer"><span>Made with a little magic</span><span aria-hidden="true">✦</span><span>For Shubh</span></footer>
+    </div>
+  </body>
+</html>
