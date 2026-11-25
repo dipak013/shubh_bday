@@ -16,6 +16,10 @@ The presentation order, short messages, image descriptions, and screen positions
 
 The introduction and final wish are in `dist/index.html`; the photo messages are in `dist/app.js`. The final screen includes `Made by Dipak`. Keep the greeting exactly `Happy Birthday, Shubh!` if preserving the original request.
 
+## Background music
+
+The optional background track is `dist/assets/audio/happy-birthday-to-you-classical-serge-quadrado.mp3`. The visitor starts or mutes it with the visible music control; it never starts automatically. It continues across scenes and fades out at the final wish. The MP3 was downloaded from [Free Music Archive](https://freemusicarchive.org/music/serge-quadrado/happy-birthday-to-you-instrumentals/happy-birthday-to-you-classical/) and is credited on the final screen under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). This site is intended for personal, non-commercial sharing.
+
 ## Hosting
 
 The `dist/` folder can be hosted on any static site host. It is configured for ChatGPT Sites through `.openai/hosting.json`.

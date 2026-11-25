@@ -61,6 +61,13 @@ const storyControlLabel = document.getElementById('story-control-label');
 const storyPauseHint = document.getElementById('story-pause-hint');
 const finaleContent = document.getElementById('finale-content');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const birthdayAudio = document.getElementById('birthday-audio');
+const musicToggle = document.getElementById('music-toggle');
+const musicLabel = document.getElementById('music-label');
+const musicStatus = document.getElementById('music-status');
+const musicVolume = 0.38;
+
+birthdayAudio.volume = musicVolume;
 
 const slides = [];
 const progressSegments = [];
@@ -76,6 +83,110 @@ let manualHoldUntil = 0;
 let swipeStart = null;
 let suppressClickUntil = 0;
 let wheelLockUntil = 0;
+let musicWanted = false;
+let musicRequest = 0;
+let musicFadeFrame = null;
+let musicContext = null;
+let musicGain = null;
+
+function prepareMusicOutput() {
+  if (musicContext) return;
+  const Context = window.AudioContext || window.webkitAudioContext;
+  if (!Context) return;
+  try {
+    musicContext = new Context();
+    const source = musicContext.createMediaElementSource(birthdayAudio);
+    musicGain = musicContext.createGain();
+    source.connect(musicGain);
+    musicGain.connect(musicContext.destination);
+    birthdayAudio.volume = 1;
+    musicGain.gain.value = musicVolume;
+  } catch {
+    musicContext = null;
+    musicGain = null;
+    birthdayAudio.volume = musicVolume;
+  }
+}
+
+function getMusicVolume() {
+  return musicGain ? musicGain.gain.value : birthdayAudio.volume;
+}
+
+function setMusicVolume(value) {
+  if (musicGain) musicGain.gain.value = value;
+  else birthdayAudio.volume = value;
+}
+
+function updateMusicButton() {
+  musicToggle.classList.toggle('is-playing', musicWanted);
+  musicToggle.setAttribute('aria-pressed', String(musicWanted));
+  musicToggle.setAttribute('aria-label', musicWanted ? 'Mute background music' : 'Play background music');
+  musicLabel.textContent = musicWanted ? 'Mute music' : 'Play music';
+}
+
+function cancelMusicFade() {
+  if (musicFadeFrame !== null) window.cancelAnimationFrame(musicFadeFrame);
+  musicFadeFrame = null;
+}
+
+function fadeMusicOut(duration = 1400, reset = false) {
+  cancelMusicFade();
+  if (birthdayAudio.paused) {
+    musicWanted = false;
+    if (reset) birthdayAudio.currentTime = 0;
+    updateMusicButton();
+    return;
+  }
+  const startVolume = getMusicVolume();
+  const startTime = performance.now();
+  const step = (now) => {
+    const amount = Math.min(1, (now - startTime) / duration);
+    setMusicVolume(startVolume * (1 - amount));
+    if (amount < 1) {
+      musicFadeFrame = window.requestAnimationFrame(step);
+    } else {
+      musicFadeFrame = null;
+      birthdayAudio.pause();
+      if (reset) birthdayAudio.currentTime = 0;
+      setMusicVolume(musicVolume);
+      musicWanted = false;
+      updateMusicButton();
+      musicStatus.textContent = 'Background music stopped';
+    }
+  };
+  musicFadeFrame = window.requestAnimationFrame(step);
+}
+
+async function toggleMusic() {
+  const request = ++musicRequest;
+  cancelMusicFade();
+  if (musicWanted) {
+    musicWanted = false;
+    birthdayAudio.pause();
+    setMusicVolume(musicVolume);
+    updateMusicButton();
+    musicStatus.textContent = 'Background music muted';
+    return;
+  }
+  musicWanted = true;
+  prepareMusicOutput();
+  setMusicVolume(musicVolume);
+  updateMusicButton();
+  try {
+    const resume = musicContext?.state === 'suspended' ? musicContext.resume() : Promise.resolve();
+    await Promise.all([resume, birthdayAudio.play()]);
+    if (request !== musicRequest) {
+      if (!musicWanted) birthdayAudio.pause();
+      return;
+    }
+    musicStatus.textContent = 'Background music playing';
+  } catch {
+    if (request !== musicRequest) return;
+    musicWanted = false;
+    updateMusicButton();
+    musicStatus.textContent = 'Music could not be played';
+  }
+}
 
 function slideDuration(index = currentIndex) {
   return photos[index]?.kind === 'detail' ? 3000 : 3600;
@@ -165,6 +276,7 @@ function updateScene(index, announce) {
   });
 
   if (isFinale) {
+    if (musicWanted) fadeMusicOut();
     storyStage.setAttribute('aria-label', 'Final birthday wish. Replay the surprise to start again.');
     storyStatus.textContent = 'Final birthday wish. The best moments are still ahead.';
   } else {
@@ -246,6 +358,8 @@ function replaySurprise() {
   isResetting = true;
   window.clearTimeout(openingTimer);
   stopRotation();
+  ++musicRequest;
+  fadeMusicOut(600, true);
   userPaused = false;
   manualHoldUntil = 0;
   body.dataset.state = 'closed';
@@ -269,6 +383,14 @@ function replaySurprise() {
 buildStory();
 openButton.addEventListener('click', openSurprise);
 replayButton.addEventListener('click', replaySurprise);
+musicToggle.addEventListener('click', toggleMusic);
+birthdayAudio.addEventListener('error', () => {
+  ++musicRequest;
+  cancelMusicFade();
+  musicWanted = false;
+  updateMusicButton();
+  musicStatus.textContent = 'Music is unavailable';
+});
 
 storyStage.addEventListener('keydown', (event) => {
   if (event.target.closest('button')) return;
@@ -322,5 +444,15 @@ storyStage.addEventListener('wheel', (event) => {
   chooseScene(currentIndex + (delta > 0 ? 1 : -1));
 }, { passive: false });
 
-document.addEventListener('visibilitychange', scheduleRotation);
+document.addEventListener('visibilitychange', () => {
+  scheduleRotation();
+  if (document.hidden) birthdayAudio.pause();
+  else if (musicWanted && musicFadeFrame === null) {
+    const resume = musicContext?.state === 'suspended' ? musicContext.resume() : Promise.resolve();
+    Promise.all([resume, birthdayAudio.play()]).catch(() => {
+      musicWanted = false;
+      updateMusicButton();
+    });
+  }
+});
 reducedMotion.addEventListener('change', () => { updateHints(); scheduleRotation(); });

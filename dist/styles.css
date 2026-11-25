@@ -379,3 +379,25 @@ html, body { width: 100%; height: 100%; overflow: hidden; overscroll-behavior: n
   .edge-chevron { animation: none !important; }
   .story-control-label::after { content: ' · advance manually'; }
 }
+
+/* Music stays available on every scene without sitting over a portrait. */
+.music-toggle { position: fixed; z-index: 40; top: 21px; right: clamp(18px, 5vw, 76px); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 0 13px; border: 1px solid rgba(244, 212, 157, .47); border-radius: 100px; background: rgba(25, 16, 43, .55); color: #ffe7b9; box-shadow: 0 5px 20px rgba(10, 5, 24, .14); backdrop-filter: blur(9px); font-size: .72rem; font-weight: 720; letter-spacing: .04em; transition: top .4s ease, background .25s ease, border-color .25s ease, transform .25s ease; }
+.music-toggle:hover { background: rgba(73, 43, 85, .7); border-color: #f4d49d; transform: translateY(-2px); }
+.music-toggle.is-playing { background: rgba(60, 47, 69, .75); border-color: rgba(244, 212, 157, .8); }
+.music-note { display: inline-block; min-width: 15px; color: var(--gold); font-family: var(--serif); font-size: 1.12rem; line-height: 1; }
+.music-toggle.is-playing .music-note { animation: music-float 2s ease-in-out infinite; }
+@keyframes music-float { 50% { transform: translateY(-2px) rotate(8deg); } }
+body[data-state='revealed'] .music-toggle { top: clamp(66px, 8vw, 93px); }
+.finale-credit { bottom: clamp(43px, 6svh, 60px); }
+.music-credit { position: absolute !important; bottom: clamp(16px, 2.7svh, 27px); left: 10px; right: 10px; margin: 0; color: #bdaec9; font-size: .63rem; letter-spacing: .02em; }
+.music-credit a { color: #d8bfd0; text-decoration-color: rgba(216, 191, 208, .45); text-underline-offset: 2px; }
+.music-credit a:hover { color: #fff1d7; }
+
+@media (max-width: 540px) {
+  .music-toggle { top: 17px; right: 17px; min-height: 34px; padding: 0 10px; font-size: .64rem; }
+  body[data-state='revealed'] .music-toggle { top: 59px; }
+  .music-credit { font-size: .59rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle.is-playing .music-note { animation: none !important; }
+}

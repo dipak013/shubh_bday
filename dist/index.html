@@ -17,8 +17,14 @@
       <header class="site-header" aria-label="Page header">
         <span class="brand-mark" aria-hidden="true">✳</span>
         <span class="brand-label">A birthday surprise</span>
-        <span class="header-stars" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
       </header>
+
+      <button class="music-toggle" id="music-toggle" type="button" aria-label="Play background music" aria-pressed="false" aria-controls="birthday-audio">
+        <span class="music-note" aria-hidden="true">♫</span>
+        <span class="music-label" id="music-label">Play music</span>
+      </button>
+      <audio id="birthday-audio" preload="auto" loop src="./assets/audio/happy-birthday-to-you-classical-serge-quadrado.mp3"></audio>
+      <span class="visually-hidden" id="music-status" aria-live="polite"></span>
 
       <main id="main">
         <section class="hero" aria-labelledby="intro-title">
@@ -109,6 +115,7 @@
               <p class="finale-message">May your days be filled with bright surprises, quiet happiness, and memories worth keeping.</p>
               <button class="replay-button" id="replay-button" type="button">Replay the surprise</button>
               <p class="finale-credit">Made by Dipak</p>
+              <p class="music-credit">Music: <a href="https://freemusicarchive.org/music/serge-quadrado/happy-birthday-to-you-instrumentals/happy-birthday-to-you-classical/" target="_blank" rel="noopener noreferrer">Serge Quadrado</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC 4.0</a></p>
             </div>
             <span class="visually-hidden" id="story-status" aria-live="polite"></span>
           </div>
